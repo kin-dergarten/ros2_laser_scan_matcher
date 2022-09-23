@@ -364,7 +364,10 @@ bool LaserScanMatcher::processScan(LDP& curr_ldp_scan, const rclcpp::Time& time)
 
   tf2::Transform pr_ch_l;
 
-  double dt = (now() - last_icp_time_).nanoseconds()/1e+9;
+  double dt = (time - last_icp_time_).nanoseconds()/1e+9;
+  if (dt <= 0 ){
+    RCLCPP_ERROR(get_logger(), "Invalid dt of %f. This should not happen", dt);
+  }
   double pr_ch_x, pr_ch_y, pr_ch_a;
   
 
@@ -491,7 +494,7 @@ bool LaserScanMatcher::processScan(LDP& curr_ldp_scan, const rclcpp::Time& time)
     ld_free(curr_ldp_scan);
 
   }
-  last_icp_time_ = now();
+  last_icp_time_ = time;
   return true;
 }
 
